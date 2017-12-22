@@ -6,15 +6,17 @@ of arbitrary size on a `⊢` ASCII net.
 Features
 --------
 
-- [ ] Project to an ASCII net
+- [x] Project to an ASCII net
 - [ ] Un-project from an ASCII net
+- [ ] Find adjacent tiles
+- [ ] Find neighbor tiles
 - [ ] Unicode support
 
 
 Dependencies
 ------------
 
-This library has no particular dependencies,
+This library has no special dependencies,
 and should work with both python 2.7 (and above), and 3.4 (and above).
 
 You will need the python package `unittest` to run the test suite.
@@ -27,10 +29,10 @@ Testing
 $ python quadsphere_lattice_test.py
 ```
 
-Alternatively, you can use `nose`, it will will find and run the test files :
+Alternatively, you can use `nose`, it will find and run the test file :
 
 ```
-$ nose2
+$ nosetests
 ```
 
 

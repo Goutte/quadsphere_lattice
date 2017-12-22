@@ -1,6 +1,8 @@
 #!/usr/bin/env python
+# coding=utf-8
 
 import unittest
+
 from quadsphere_lattice import Lattice
 
 
@@ -49,6 +51,38 @@ class TestQuadsphereLattice(unittest.TestCase):
   |   |
 -- --- --
   |   |
+""".strip("\n")
+        self.assertMultilineEquals(expected, actual)
+
+    def test_to_ascii_net_with_tiles(self):
+        lattice = Lattice(size=3)
+        lattice.set_tile(1, 0, 0, 'X')
+        lattice.set_tile(0, 1, 0, 'O')
+        lattice.set_tile(0, 1, 2, '❥')
+        lattice.set_tile(0, 0, 1, '#')
+        # projection should truncate to one character per tile
+        lattice.set_tile(0, 2, 1, '@@@')
+        actual = lattice.to_ascii_net()
+        expected = """
+  |   |   |
+-- ---❥--- --
+  |   |   |
+-- ---O--- --
+  |   |   |
+-- --- --- --
+  |   |   |   |   |   |   |   |   |   |   |   |
+-- --- --- --- --- --- --- ---@--- --- --- --- --
+  |   |   |   |   |   |   |   |   |   |   |   |
+-- --- --- --- ---X--- --- ---#--- --- --- --- --
+  |   |   |   |   |   |   |   |   |   |   |   |
+-- --- --- --- --- --- --- --- --- --- --- --- --
+  |   |   |   |   |   |   |   |   |   |   |   |
+-- --- --- --
+  |   |   |
+-- --- --- --
+  |   |   |
+-- --- --- --
+  |   |   |
 """.strip("\n")
         self.assertMultilineEquals(expected, actual)
 

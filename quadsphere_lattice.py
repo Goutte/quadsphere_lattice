@@ -36,7 +36,7 @@ class Lattice:
 
             s += "%s%s" % (h, h)
             for tile in self._get_tiles(y=1, z=z, default=f):
-                s += "%s%s%s%s" % (tile, h, h, h)
+                s += "%.1s%s%s%s" % (tile, h, h, h)
             s = s[0:-1]  # remove extra horizontal line at the very end
             s += "\n"
 
@@ -46,13 +46,13 @@ class Lattice:
 
             s += "%s%s" % (h, h)
             for tile in self._get_tiles(y=y, z=-1, default=f):
-                s += "%s%s%s%s" % (tile, h, h, h)
+                s += "%.1s%s%s%s" % (tile, h, h, h)
             for tile in self._get_tiles(x=1, y=y, default=f):
-                s += "%s%s%s%s" % (tile, h, h, h)
+                s += "%.1s%s%s%s" % (tile, h, h, h)
             for tile in self._get_tiles(y=y, z=1, default=f, invert=True):
-                s += "%s%s%s%s" % (tile, h, h, h)
+                s += "%.1s%s%s%s" % (tile, h, h, h)
             for tile in self._get_tiles(x=-1, y=y, default=f, invert=True):
-                s += "%s%s%s%s" % (tile, h, h, h)
+                s += "%.1s%s%s%s" % (tile, h, h, h)
             s = s[0:-1]  # remove extra horizontal line at the very end
             s += "\n"
         s += _vertical_separators_line(self.size * 4 - 1)
@@ -61,7 +61,7 @@ class Lattice:
         for z in self._get_coords_range():
             s += "%s%s" % (h, h)
             for tile in self._get_tiles(y=-1, z=z, default=f):
-                s += "%s%s%s%s" % (tile, h, h, h)
+                s += "%.1s%s%s%s" % (tile, h, h, h)
             s = s[0:-1]  # remove extra horizontal line at the very end
             s += "\n"
 
@@ -76,6 +76,10 @@ class Lattice:
             return self.index[k]
         else:
             return default
+
+    def set_tile(self, x, y, z, value):
+        k = "%d,%d,%d" % (x, y, z)
+        self.index[k] = value
 
     def _get_coords_range(self, invert=False):
         e = self.size - 1
