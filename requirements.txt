@@ -1,0 +1,6 @@
+benchmark
+coverage
+pypandoc
+future
+nose
+six
