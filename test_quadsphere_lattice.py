@@ -68,7 +68,7 @@ class TestQuadsphereLattice(unittest.TestCase):
         # projection should truncate to one character per tile
         lattice.set_tile(0, 2, 1, '@@@')
         actual = lattice.to_ascii_net()
-        expected = u"""
+        expected = """
   |   |   |
 -- ---&--- --
   |   |   |
