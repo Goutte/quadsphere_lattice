@@ -1,4 +1,4 @@
-# benchmark
+# benchmark  # Nice, but not python3 compatible
 coverage
 pypandoc
 future
