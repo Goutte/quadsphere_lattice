@@ -7,10 +7,10 @@ Features
 --------
 
 - [x] Project to an ASCII net
+- [x] Support Unicode
 - [ ] Un-project from an ASCII net
 - [ ] Find adjacent tiles
 - [ ] Find neighbor tiles
-- [ ] Unicode support
 
 
 Dependencies
@@ -26,7 +26,7 @@ Testing
 -------
 
 ```
-$ python quadsphere_lattice_test.py
+$ python test_quadsphere_lattice.py
 ```
 
 Alternatively, you can use `nose`, it will find and run the test file :

@@ -58,14 +58,19 @@ class TestQuadsphereLattice(unittest.TestCase):
         lattice = Lattice(size=3)
         lattice.set_tile(1, 0, 0, 'X')
         lattice.set_tile(0, 1, 0, 'O')
-        lattice.set_tile(0, 1, 2, '❥')
-        lattice.set_tile(0, 0, 1, '#')
+        # overwriting should be allowed
+        lattice.set_tile(0, 1, 2, 'E')
+        lattice.set_tile(0, 1, 2, '&')
+        # - character should be allowed
+        lattice.set_tile(0, 0, 1, '-')
+        # | character should be allowed
+        lattice.set_tile(2, 0, 1, '|')
         # projection should truncate to one character per tile
         lattice.set_tile(0, 2, 1, '@@@')
         actual = lattice.to_ascii_net()
-        expected = """
+        expected = u"""
   |   |   |
--- ---❥--- --
+-- ---&--- --
   |   |   |
 -- ---O--- --
   |   |   |
@@ -73,7 +78,7 @@ class TestQuadsphereLattice(unittest.TestCase):
   |   |   |   |   |   |   |   |   |   |   |   |
 -- --- --- --- --- --- --- ---@--- --- --- --- --
   |   |   |   |   |   |   |   |   |   |   |   |
--- --- --- --- ---X--- --- ---#--- --- --- --- --
+-- --- --- --- ---X--- ---|------- --- --- --- --
   |   |   |   |   |   |   |   |   |   |   |   |
 -- --- --- --- --- --- --- --- --- --- --- --- --
   |   |   |   |   |   |   |   |   |   |   |   |
@@ -83,6 +88,24 @@ class TestQuadsphereLattice(unittest.TestCase):
   |   |   |
 -- --- --- --
   |   |   |
+""".strip("\n")
+        self.assertMultilineEquals(expected, actual)
+
+    def test_to_ascii_net_with_unicode_tiles(self):
+        lattice = Lattice(size=1)
+        lattice.set_tile(1, 0, 0, u'✗')
+        lattice.set_tile(0, 1, 0, u'❥')
+        # projection should truncate to one character per tile
+        lattice.set_tile(0, 0, 1, u'✊✋✌')
+        actual = lattice.to_ascii_net()
+        expected = u"""
+  |
+--❥--
+  |   |   |   |
+-- ---✗---✊--- --
+  |   |   |   |
+-- --
+  |
 """.strip("\n")
         self.assertMultilineEquals(expected, actual)
 
