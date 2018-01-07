@@ -3,6 +3,8 @@ A python package to handle projecting and unprojecting
 a quadrilateralised spherical cube (quadsphere) lattice
 of arbitrary size on a `⊢` ASCII net.
 
+![Travis Status](https://img.shields.io/travis/Goutte/quadsphere_lattice.svg)
+
 Features
 --------
 
