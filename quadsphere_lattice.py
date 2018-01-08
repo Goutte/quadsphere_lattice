@@ -20,6 +20,7 @@ class Lattice:
         v = '|'  # vertical line
         f = ' '  # default filler for empty tiles
 
+        w = self.size
         s = ""
 
         def _vertical_separators_line(how_many, new_line=True):
@@ -35,7 +36,7 @@ class Lattice:
             s += _vertical_separators_line(self.size - 1)
 
             s += "%s%s" % (h, h)
-            for tile in self._get_tiles(y=1, z=z, default=f):
+            for tile in self._get_tiles(y=w, z=z, default=f):
                 s += "%.1s%s%s%s" % (tile, h, h, h)
             s = s[0:-1]  # remove extra horizontal line at the very end
             s += "\n"
@@ -45,13 +46,13 @@ class Lattice:
             s += _vertical_separators_line(self.size * 4 - 1)
 
             s += "%s%s" % (h, h)
-            for tile in self._get_tiles(y=y, z=-1, default=f):
+            for tile in self._get_tiles(y=y, z=-w, default=f):
                 s += "%.1s%s%s%s" % (tile, h, h, h)
-            for tile in self._get_tiles(x=1, y=y, default=f):
+            for tile in self._get_tiles(x=w, y=y, default=f):
                 s += "%.1s%s%s%s" % (tile, h, h, h)
-            for tile in self._get_tiles(y=y, z=1, default=f, invert=True):
+            for tile in self._get_tiles(y=y, z=w, default=f, invert=True):
                 s += "%.1s%s%s%s" % (tile, h, h, h)
-            for tile in self._get_tiles(x=-1, y=y, default=f, invert=True):
+            for tile in self._get_tiles(x=-w, y=y, default=f, invert=True):
                 s += "%.1s%s%s%s" % (tile, h, h, h)
             s = s[0:-1]  # remove extra horizontal line at the very end
             s += "\n"
@@ -60,7 +61,7 @@ class Lattice:
         # Bottom face : 0 -1 0
         for z in self._get_coords_range():
             s += "%s%s" % (h, h)
-            for tile in self._get_tiles(y=-1, z=z, default=f):
+            for tile in self._get_tiles(y=-w, z=z, default=f):
                 s += "%.1s%s%s%s" % (tile, h, h, h)
             s = s[0:-1]  # remove extra horizontal line at the very end
             s += "\n"
@@ -80,6 +81,64 @@ class Lattice:
     def set_tile(self, x, y, z, value):
         k = "%d,%d,%d" % (x, y, z)
         self.index[k] = value
+
+    @classmethod
+    def from_ascii_net(cls, net):
+        # todo: refactor h and v
+        h = '-'  # horizontal line
+        v = '|'  # vertical line
+
+        def convert(_char):
+            return _char
+
+        all_lines = net.split("\n")
+        size = all_lines[0].count(v)
+
+        lattice = cls(size=size)
+
+        lines = []
+        for i in range(1, len(all_lines), 2):
+            lines.append(all_lines[i][2:-2].split("%s%s%s" % (h, h, h)))
+
+        # Top face : 0 1 0
+        y = size
+        for z in lattice._get_coords_range(invert=True):
+            line = lines.pop(0)
+            for x in lattice._get_coords_range():
+                v = convert(line.pop(0))
+                lattice.set_tile(x=x, y=y, z=z, value=v)
+
+        # Middle faces : 0 0 -1 | 1 0 0 | 0 0 1 | -1 0 0
+        for y in lattice._get_coords_range(invert=True):
+            line = lines.pop(0)
+            z = -size
+            for x in lattice._get_coords_range():
+                v = convert(line.pop(0))
+                lattice.set_tile(x=x, y=y, z=z, value=v)
+            x = size
+            for z in lattice._get_coords_range():
+                v = convert(line.pop(0))
+                lattice.set_tile(x=x, y=y, z=z, value=v)
+            z = size
+            for x in lattice._get_coords_range(invert=True):
+                v = convert(line.pop(0))
+                lattice.set_tile(x=x, y=y, z=z, value=v)
+            x = -size
+            for z in lattice._get_coords_range(invert=True):
+                v = convert(line.pop(0))
+                lattice.set_tile(x=x, y=y, z=z, value=v)
+
+        # Bottom face : 0 -1 0
+        y = -size
+        for z in lattice._get_coords_range():
+            line = lines.pop(0)
+            for x in lattice._get_coords_range():
+                v = convert(line.pop(0))
+                lattice.set_tile(x=x, y=y, z=z, value=v)
+
+        return lattice
+
+    # PRIVATE #################################################################
 
     def _get_coords_range(self, invert=False):
         e = self.size - 1

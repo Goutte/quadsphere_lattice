@@ -10,7 +10,7 @@ Features
 
 - [x] Project to an ASCII net
 - [x] Support Unicode
-- [ ] Un-project from an ASCII net
+- [x] Un-project from an ASCII net
 - [ ] Find adjacent tiles
 - [ ] Find neighbor tiles
 
@@ -19,7 +19,7 @@ Dependencies
 ------------
 
 This library has no special dependencies,
-and should work with both python 2.7 (and above), and 3.4 (and above).
+and should work from python 2.6 to python 3.6.
 
 You will need the python package `unittest` to run the test suite.
 

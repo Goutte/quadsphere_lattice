@@ -56,17 +56,18 @@ class TestQuadsphereLattice(unittest.TestCase):
 
     def test_to_ascii_net_with_tiles(self):
         lattice = Lattice(size=3)
-        lattice.set_tile(1, 0, 0, 'X')
-        lattice.set_tile(0, 1, 0, 'O')
+        lattice.set_tile(3, 0, 0, 'X')
+        lattice.set_tile(0, 3, 0, 'O')
+        lattice.set_tile(2, -3, -2, '9')
         # overwriting should be allowed
-        lattice.set_tile(0, 1, 2, 'E')
-        lattice.set_tile(0, 1, 2, '&')
+        lattice.set_tile(0, 3, 2, 'E')
+        lattice.set_tile(0, 3, 2, '&')
         # - character should be allowed
-        lattice.set_tile(0, 0, 1, '-')
+        lattice.set_tile(0, 0, 3, '-')
         # | character should be allowed
-        lattice.set_tile(2, 0, 1, '|')
+        lattice.set_tile(2, 0, 3, '|')
         # projection should truncate to one character per tile
-        lattice.set_tile(0, 2, 1, '@@@')
+        lattice.set_tile(0, 2, 3, '@@@')
         actual = lattice.to_ascii_net()
         expected = """
   |   |   |
@@ -82,7 +83,7 @@ class TestQuadsphereLattice(unittest.TestCase):
   |   |   |   |   |   |   |   |   |   |   |   |
 -- --- --- --- --- --- --- --- --- --- --- --- --
   |   |   |   |   |   |   |   |   |   |   |   |
--- --- --- --
+-- --- ---9--
   |   |   |
 -- --- --- --
   |   |   |
@@ -95,7 +96,7 @@ class TestQuadsphereLattice(unittest.TestCase):
         lattice = Lattice(size=1)
         lattice.set_tile(1, 0, 0, u'✗')
         lattice.set_tile(0, 1, 0, u'❥')
-        # projection should truncate to one character per tile
+        # projection should truncate to one unicode character per tile
         lattice.set_tile(0, 0, 1, u'✊✋✌')
         actual = lattice.to_ascii_net()
         expected = u"""
@@ -107,6 +108,28 @@ class TestQuadsphereLattice(unittest.TestCase):
 -- --
   |
 """.strip("\n")
+        self.assertMultilineEquals(expected, actual)
+
+    def test_from_ascii_net_size_2(self):
+        net = """
+  |   |
+--X---X--
+  |   |
+-- --- --
+  |   |   |   |   |   |   |   |
+-- --- --- --- --- ---X---O--- --
+  |   |   |   |   |   |   |   |
+-- ---X--- ---O--- --- ---O--- --
+  |   |   |   |   |   |   |   |
+-- --- --
+  |   |
+-- ---X--
+  |   |
+""".strip("\n")
+        lattice = Lattice.from_ascii_net(net)
+        expected = net
+        actual = lattice.to_ascii_net()
+
         self.assertMultilineEquals(expected, actual)
 
 
