@@ -1,6 +1,7 @@
 # benchmark  # Nice, but not python3 compatible
-coverage
-pypandoc
-future
 nose
-six
+
+#coverage
+#pypandoc
+#future
+#six
