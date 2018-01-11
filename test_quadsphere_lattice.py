@@ -132,6 +132,47 @@ class TestQuadsphereLattice(unittest.TestCase):
 
         self.assertMultilineEquals(expected, actual)
 
+    def test_get_adjacent_coordinates(self):
+        net = """
+  |   |   |
+-- --- --- --
+  |   |   |
+-- --- --- --
+  |   |   |
+--0--- --- --
+  |   |   |   |   |   |   |   |   |   |   |   |
+--1---0--- --- --- --- --- ---+--- --- --- ---0--
+  |   |   |   |   |   |   |   |   |   |   |   |
+--0--- --- --- ---X--- ---+---+---+--- --- --- --
+  |   |   |   |   |   |   |   |   |   |   |   |
+-- --- --- ---X---Z---X--- ---+--- --- --- --- --
+  |   |   |   |   |   |   |   |   |   |   |   |
+-- --- --- --
+  |   |   |
+-- --- ---X--
+  |   |   |
+-- --- --- --
+  |   |   |
+""".strip("\n")
+        lattice = Lattice(size=3)
+
+        tiles = [
+            # (where, char on tile, char on adjacents)
+            ((3, -2, 0), 'Z', 'X'),
+            ((-2, 2, -3), '1', '0'),
+            ((0, 0, 3), '+', '+'),
+        ]
+
+        for tile in tiles:
+            lattice.set_tile(tile[0][0], tile[0][1], tile[0][2], tile[1])
+            for adj in lattice.get_adjacent_coordinates(tile[0]):
+                lattice.set_tile(adj[0], adj[1], adj[2], tile[2])
+
+        expected = net
+        actual = lattice.to_ascii_net()
+
+        self.assertMultilineEquals(expected, actual)
+
 
 if __name__ == '__main__':
     unittest.main()

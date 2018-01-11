@@ -11,7 +11,7 @@ Features
 - [x] Project to an ASCII net
 - [x] Support Unicode
 - [x] Un-project from an ASCII net
-- [ ] Find adjacent tiles
+- [x] Find adjacent tiles
 - [ ] Find neighbor tiles
 
 

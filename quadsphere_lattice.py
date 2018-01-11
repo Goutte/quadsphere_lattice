@@ -1,3 +1,5 @@
+def _norm(numeral_thingy):
+    return 1 if numeral_thingy > 0 else -1 if numeral_thingy < 0 else 0
 
 
 class Lattice:
@@ -16,6 +18,12 @@ class Lattice:
         return self.to_ascii_net()
 
     def to_ascii_net(self):
+        """
+        Dump the lattice as an ASCII net of a rubik's cube.
+        Each tile will be cast to a single character.
+        See the tests for how it looks.
+        :return: string
+        """
         h = '-'  # horizontal line
         v = '|'  # vertical line
         f = ' '  # default filler for empty tiles
@@ -82,13 +90,76 @@ class Lattice:
         k = "%d,%d,%d" % (x, y, z)
         self.index[k] = value
 
+    def is_valid_coordinates(self, x, y, z):
+        r = self._get_coords_range()
+        return \
+            (abs(x) == self.size and y in r and z in r) or \
+            (abs(y) == self.size and z in r and x in r) or \
+            (abs(z) == self.size and x in r and y in r)
+
+    def get_adjacent_coordinates(self, xyz):
+        adjacent = []
+
+        x = xyz[0]
+        y = xyz[1]
+        z = xyz[2]
+
+        face = self._get_offset_of_cube_face_axis(xyz=xyz)
+
+        if face == 0:
+            adjacent.append(self.normalize([x + 0, y + 2, z + 0]))
+            adjacent.append(self.normalize([x + 0, y - 2, z + 0]))
+            adjacent.append(self.normalize([x + 0, y + 0, z + 2]))
+            adjacent.append(self.normalize([x + 0, y + 0, z - 2]))
+        elif face == 1:
+            adjacent.append(self.normalize([x + 2, y + 0, z + 0]))
+            adjacent.append(self.normalize([x - 2, y + 0, z + 0]))
+            adjacent.append(self.normalize([x + 0, y + 0, z + 2]))
+            adjacent.append(self.normalize([x + 0, y + 0, z - 2]))
+        elif face == 2:
+            adjacent.append(self.normalize([x + 2, y + 0, z + 0]))
+            adjacent.append(self.normalize([x - 2, y + 0, z + 0]))
+            adjacent.append(self.normalize([x + 0, y + 2, z + 0]))
+            adjacent.append(self.normalize([x + 0, y - 2, z + 0]))
+
+        # print([a for a in adjacent if self.is_valid_coordinates(*a)])
+        # return [a for a in adjacent if self.is_valid_coordinates(*a)]
+
+        return adjacent
+
+    def _get_offset_of_cube_face_axis(self, xyz):
+        for i in range(3):
+            if abs(xyz[i]) == self.size:
+                return i
+        raise Exception("Coordinates %s have no cube face." % (xyz,))
+
+    def _get_offset_of_overflowed_axis(self, xyz):
+        for i in range(3):
+            if abs(xyz[i]) > self.size:
+                return i
+        return -1
+
+    def normalize(self, xyz):
+        over = self._get_offset_of_overflowed_axis(xyz=xyz)
+        while over > -1:
+            face = self._get_offset_of_cube_face_axis(xyz=xyz)
+
+            o = xyz[over]
+            f = xyz[face]
+
+            xyz[over] = min(self.size, max(-self.size, o))
+            xyz[face] = f - _norm(f) * abs(o - _norm(o) * self.size)
+            over = self._get_offset_of_overflowed_axis(xyz=xyz)
+
+        return xyz
+
     @classmethod
     def from_ascii_net(cls, net):
         # todo: refactor h and v
         h = '-'  # horizontal line
         v = '|'  # vertical line
 
-        def convert(_char):
+        def convert(_char):  # dummy to allow override, which is todo
             return _char
 
         all_lines = net.split("\n")
@@ -144,6 +215,7 @@ class Lattice:
         e = self.size - 1
         if invert:
             return [c for c in range(e, -1 * e - 1, -2)]
+            # return range(e, -1 * e - 1, -2) todo benchmarking across git branches, maybe https://github.com/vstinner/perf
         else:
             return [c for c in range(-1 * e, 1 + e, 2)]
 
